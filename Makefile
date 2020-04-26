@@ -12,14 +12,20 @@ all: ttws
 .PHONY: ttws
 ttws: out/ttws
 
-out/ttws: cmd/ttws/main.go webserver cpuloadgenerator
+out/ttws: cmd/ttws/main.go webserver cpuload ipaddresses envvars
 	CGO_ENABLED=0 go build -o $@ $<
 
 .PHONY: webserver
 webserver: pkg/webserver/*.go
 
-.PHONY: cpuloadgenerator
-cpuloadgenerator: pkg/cpuloadgenerator/*.go
+.PHONY: cpuload
+cpuload: pkg/cpuload/*.go
+
+.PHONY: ipaddresses
+ipaddresses: pkg/ipaddresses/*.go
+
+.PHONY: envvars
+envvars: pkg/envvars/*.go
 
 .PHONY: ttwsimage
 ttwsimage: ttws out/ttwsDockerfile 

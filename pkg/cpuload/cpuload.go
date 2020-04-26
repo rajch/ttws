@@ -1,4 +1,4 @@
-package cpuloadgenerator
+package cpuload
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 // Route is the default path to invoke the cpuloadgenerator module - /loadcpu
 const Route = "/loadcpu"
 
-func cpuloadgeneratehandler(w http.ResponseWriter, r *http.Request) {
+func cpuloadhandler(w http.ResponseWriter, r *http.Request) {
 	value := 0.0001
 	for i := 0; i <= 1000000; i++ {
 		value += math.Sqrt(value)
@@ -25,5 +25,5 @@ func SetHome() {
 }
 
 func init() {
-	webserver.AddRoute(Route, cpuloadgeneratehandler)
+	webserver.AddRoute(Route, cpuloadhandler)
 }
