@@ -6,26 +6,33 @@ BUILD_NUMBER  ?= 0
 IMAGE_TAG ?= $(VERSION_MAJOR).$(VERSION_MINOR).$(BUILD_NUMBER)
 REGISTRY_USER ?= rajchaudhuri
 
+# Macro for meta-rule
+define MODULERULE
+.PHONY: $M
+$M: pkg/$(M)/*.go
+endef
+
+ALLMODULES = webserver cpuload ipaddresses envvars
+
 .PHONY: all
 all: ttws
 
 .PHONY: ttws
 ttws: out/ttws
 
-out/ttws: cmd/ttws/main.go webserver cpuload ipaddresses envvars
+out/ttws: cmd/ttws/main.go $(ALLMODULES)
 	CGO_ENABLED=0 go build -o $@ $<
 
-.PHONY: webserver
-webserver: pkg/webserver/*.go
-
-.PHONY: cpuload
-cpuload: pkg/cpuload/*.go
-
-.PHONY: ipaddresses
-ipaddresses: pkg/ipaddresses/*.go
-
-.PHONY: envvars
-envvars: pkg/envvars/*.go
+# The following meta-rule will generate rules like:
+# .PHONY: webserver
+# webserver: pkg/webserver/*.go
+# .PHONY: cpuload
+# cpuload: pkg/cpuload/*.go
+# .PHONY: ipaddresses
+# ipaddresses: pkg/ipaddresses/*.go
+# .PHONY: envvars
+# envvars: pkg/envvars/*.go
+$(foreach M,$(ALLMODULES),$(eval $(MODULERULE)))
 
 .PHONY: ttwsimage
 ttwsimage: ttws out/ttwsDockerfile 
