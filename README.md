@@ -10,8 +10,10 @@ This project provides building blocks for creating tiny web servers suitable for
 
 |Package|Description|
 |-------|-----------|
-|webserver|The core webserver. Listens on a port, stops on SIGINT or SIGTERM, sets up routes defined by the other packages|
-|cpuloadgenerator|Registers a route and handler which calculates the square root of 0.0001, one million times.|
+|webserver|The core webserver. Listens on a port, stops on SIGINT or SIGTERM, sets up handlers defined by the other packages|
+|cpuloadgenerator|Handler. Calculates the square root of 0.0001, one million times, and outputs the result.|
+|ipaddresses|Handler. Outputs the host name and ip addresses of the web host.|
+
 
 ## Commands
 

@@ -8,7 +8,7 @@ import (
 	"github.com/rajch/ttws/pkg/webserver"
 )
 
-// Route is the path using which this functionality can be invoked
+// Route is the default path to invoke the cpuloadgenerator module - /loadcpu
 const Route = "/loadcpu"
 
 func cpuloadgeneratehandler(w http.ResponseWriter, r *http.Request) {
