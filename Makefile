@@ -7,21 +7,30 @@ IMAGE_TAG ?= $(VERSION_MAJOR).$(VERSION_MINOR).$(BUILD_NUMBER)
 REGISTRY_USER ?= rajchaudhuri
 
 .PHONY: all
-all: tinyws dockerimage
+all: ttws
 
-out/tinyws: cmd/main.go internal/pkg/webserver/*.go
+.PHONY: ttws
+ttws: out/ttws
+
+out/ttws: cmd/ttws/main.go webserver cpuloadgenerator
 	CGO_ENABLED=0 go build -o $@ $<
 
-.PHONY: tinyws
-tinyws: out/tinyws
+.PHONY: webserver
+webserver: pkg/webserver/*.go
 
-.PHONY: dockerimage
-dockerimage: build/package/singlestage.Dockerfile out/tinyws
-	docker image build -f build/package/singlestage.Dockerfile -t $(REGISTRY_USER)/tinyws:$(IMAGE_TAG) .
+.PHONY: cpuloadgenerator
+cpuloadgenerator: pkg/cpuloadgenerator/*.go
+
+.PHONY: ttwsimage
+ttwsimage: ttws out/ttwsDockerfile 
+	docker image build -f out/ttwsDockerfile -t $(REGISTRY_USER)/ttws:$(IMAGE_TAG) out/
+
+out/ttwsDockerfile: build/package/ttws/singlestage.Dockerfile
+	cp $< $@
 
 .PHONY: rmi
 rmi:
-	docker image rm $(REGISTRY_USER)/tinyws:$(IMAGE_TAG)
+	docker image rm $(REGISTRY_USER)/ttws:$(IMAGE_TAG)
 
 .PHONY: clean
 clean:
