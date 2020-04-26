@@ -3,6 +3,9 @@ Tiny test web server
 
 This project provides building blocks for creating tiny web servers suitable for running inside containers.
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/rajch/ttws)](https://goreportcard.com/report/github.com/rajch/ttws)
+
+
 ## Packages
 
 |Package|Description|
@@ -15,6 +18,5 @@ This project provides building blocks for creating tiny web servers suitable for
 |Command|Description|
 |---|---|
 |ttws|A web server which includes all packages|
-
 
 
