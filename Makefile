@@ -12,7 +12,7 @@ define MODULERULE
 $M: pkg/$(M)/*.go
 endef
 
-ALLMODULES = webserver cpuload ipaddresses envvars
+ALLMODULES = webserver cpuload ipaddresses envvars filesystem
 
 .PHONY: all
 all: ttws
