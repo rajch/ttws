@@ -28,6 +28,9 @@ endef
 # out/ttwsDockerfile: build/package/ttws/singlestage.Dockerfile
 # 	cp build/package/ttws/singlestage.Dockerfile out/ttwsDockerfile
 #
+# .PHONY: ttwsimagemultistage
+#	docker image build -f build/package/ttws/multistage.Dockerfile -t $(REGISTRY_USER)/ttws:$(IMAGE_TAG) .
+#
 # .PHONY: ttwsrmi
 # ttwsrmi:
 # 	docker image rm $(REGISTRY_USER)/ttws:$(IMAGE_TAG)
@@ -44,6 +47,10 @@ $(C)image: $C out/$(C)Dockerfile
 
 out/$(C)Dockerfile: build/package/$(C)/singlestage.Dockerfile
 	cp build/package/$(C)/singlestage.Dockerfile out/$(C)Dockerfile
+
+.PHONY: $(C)imagemultistage
+$(C)imagemultistage: build/package/$(C)/multistage.Dockerfile
+	docker image build -f build/package/$(C)/multistage.Dockerfile -t $(REGISTRY_USER)/$(C):$(IMAGE_TAG) .
 
 .PHONY: rmi$(C)
 rmi$(C):
