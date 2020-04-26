@@ -13,6 +13,7 @@ This project provides building blocks for creating tiny web servers suitable for
 |webserver|The core webserver. Listens on a port, stops on SIGINT or SIGTERM, sets up handlers defined by the other packages|
 |cpuloadgenerator|Handler. Calculates the square root of 0.0001, one million times, and outputs the result.|
 |ipaddresses|Handler. Outputs the host name and ip addresses of the web host.|
+|envvars|Handler. Outputs all environment variables of the host process|
 
 
 ## Commands
