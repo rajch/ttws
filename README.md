@@ -22,5 +22,6 @@ This project provides building blocks for creating tiny web servers suitable for
 |Command|Description|
 |---|---|
 |ttws|A web server which includes all packages|
+|ics|A web server which includes the ipaddresses, envvars and filesystem packages. Ipaddresses is default.|
 
 

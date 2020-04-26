@@ -6,44 +6,64 @@ BUILD_NUMBER  ?= 0
 IMAGE_TAG ?= $(VERSION_MAJOR).$(VERSION_MINOR).$(BUILD_NUMBER)
 REGISTRY_USER ?= rajchaudhuri
 
-# Macro for meta-rule
+# Macro for module meta-ruleset. Sample generated ruleset with input 'webserver': 
+# .PHONY: webserver
+# webserver: pkg/webserver/*.go
 define MODULERULE
 .PHONY: $M
 $M: pkg/$(M)/*.go
 endef
 
+# Macro for command meta-ruleset. Sample generated ruleset with input 'ttws':
+# .PHONY: ttws
+# ttws: out/ttws
+#
+# out/ttws: cmd/ttws/main.go $(ttwsMODULES)
+# 	CGO_ENABLED=0 go build -o out/ttws cmd/ttws/main.go
+#
+# .PHONY: ttwsimage
+# ttwsimage: ttws out/ttwsDockerfile 
+# 	docker image build -f out/ttwsDockerfile -t $(REGISTRY_USER)/ttws:$(IMAGE_TAG) out/
+#
+# out/ttwsDockerfile: build/package/ttws/singlestage.Dockerfile
+# 	cp build/package/ttws/singlestage.Dockerfile out/ttwsDockerfile
+#
+# .PHONY: ttwsrmi
+# ttwsrmi:
+# 	docker image rm $(REGISTRY_USER)/ttws:$(IMAGE_TAG)
+define CMDRULE
+.PHONY: $C
+$C: out/$(C)
+
+out/$C: cmd/$C/main.go $($(C)MODULES)
+	CGO_ENABLED=0 go build -o out/$(C) cmd/$C/main.go
+
+.PHONY: $(C)image
+$(C)image: $C out/$(C)Dockerfile
+	docker image build -f out/$(C)Dockerfile -t $(REGISTRY_USER)/$(C):$(IMAGE_TAG) out/
+
+out/$(C)Dockerfile: build/package/$(C)/singlestage.Dockerfile
+	cp build/package/$(C)/singlestage.Dockerfile out/$(C)Dockerfile
+
+.PHONY: rmi$(C)
+rmi$(C):
+	docker image rm $(REGISTRY_USER)/$(C):$(IMAGE_TAG)
+endef
+
 ALLMODULES = webserver cpuload ipaddresses envvars filesystem
+ALLCMDS = ttws ics
 
-.PHONY: all
-all: ttws
+ttwsMODULES = $(ALLMODULES)
+icsMODULES = webserver ipaddresses envvars filesystem
 
-.PHONY: ttws
-ttws: out/ttws
+# .PHONY: all
+# all: ttws
 
-out/ttws: cmd/ttws/main.go $(ALLMODULES)
-	CGO_ENABLED=0 go build -o $@ $<
+# Apply command rules
+$(foreach C,$(ALLCMDS),$(eval $(CMDRULE)))
 
-# The following meta-rule will generate rules like:
-# .PHONY: webserver
-# webserver: pkg/webserver/*.go
-# .PHONY: cpuload
-# cpuload: pkg/cpuload/*.go
-# .PHONY: ipaddresses
-# ipaddresses: pkg/ipaddresses/*.go
-# .PHONY: envvars
-# envvars: pkg/envvars/*.go
+# Apply module rules
 $(foreach M,$(ALLMODULES),$(eval $(MODULERULE)))
-
-.PHONY: ttwsimage
-ttwsimage: ttws out/ttwsDockerfile 
-	docker image build -f out/ttwsDockerfile -t $(REGISTRY_USER)/ttws:$(IMAGE_TAG) out/
-
-out/ttwsDockerfile: build/package/ttws/singlestage.Dockerfile
-	cp $< $@
-
-.PHONY: rmi
-rmi:
-	docker image rm $(REGISTRY_USER)/ttws:$(IMAGE_TAG)
 
 .PHONY: clean
 clean:
