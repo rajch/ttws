@@ -1,7 +1,7 @@
 # ttws
 Tiny test web server 
 
-This project provides building blocks for creating tiny web servers suitable for running inside containers.
+This project provides building blocks for creating tiny web servers suitable for running inside containers. It also includes a few sample web servers.
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/rajch/ttws)](https://goreportcard.com/report/github.com/rajch/ttws)
 
@@ -17,11 +17,19 @@ This project provides building blocks for creating tiny web servers suitable for
 |filesystem|Handler. Outputs directory and file names from the host filesystem. Path and depth can be specified.|
 
 
-## Commands
+## Web Servers
 
-|Command|Description|
+|Server|Description|
 |---|---|
 |ttws|A web server which includes all packages|
 |ics|A web server which includes the ipaddresses, envvars and filesystem packages. Ipaddresses is default.|
+
+## Options
+
+All servers can have the following options specified on the command line:
+
+|Option|Description|
+|---|---|
+|-p &lt;port>|The port on which the server listens. Can also be specified via an evironment variable, PORT.|
 
 

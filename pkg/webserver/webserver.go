@@ -7,15 +7,36 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+
+	"flag"
 )
 
 var (
-	//server       http.Server
-	//serverMux    *http.ServeMux
-	//serverClosed chan struct{}
 	routes    map[string]func(http.ResponseWriter, *http.Request)
 	homeroute string
+
+	// Flags
+	portflag = flag.String("p", "8080", "Port on which to run the server.")
 )
+
+// GetOption gets an the value for an option. The value can be, in descending order
+// of preference:
+// - provided as a command-line option
+// - provided as an environment variable
+// - the default value
+func GetOption(flag *string, envvarname string, defaultvalue string) string {
+	result := *flag
+
+	if result == "" || result == defaultvalue {
+		result = os.Getenv(envvarname)
+	}
+
+	if result == "" {
+		result = defaultvalue
+	}
+
+	return result
+}
 
 // AddRoute adds a handler to the webserver's routes.
 func AddRoute(route string, routeHandler func(http.ResponseWriter, *http.Request)) {
@@ -34,8 +55,12 @@ func SetHome(route string) {
 // Serve starts the tiny test web server.
 // A handler is set up for SIGINT and SIGTERM
 func Serve() {
+	flag.Parse()
+
+	port := ":" + GetOption(portflag, "PORT", "8080")
+
 	serverMux := http.NewServeMux()
-	server := http.Server{Addr: ":8080", Handler: serverMux}
+	server := http.Server{Addr: port, Handler: serverMux}
 
 	// Use a channel to signal server closure
 	serverClosed := make(chan struct{})
@@ -67,14 +92,14 @@ func Serve() {
 		log.Println("Server shutting down...")
 		if err := server.Shutdown(context.Background()); err != nil {
 			// Error from closing listeners, or context timeout:
-			log.Fatalf("Error during HTTP server Shutdown: %v", err)
+			log.Fatalf("Error during HTTP server shutdown: %v", err)
 		}
 
 		close(serverClosed)
 	}()
 
 	// Start listening using the server
-	log.Println("Server starting...")
+	log.Printf("Server starting on port %v...\n", port)
 	if err := server.ListenAndServe(); err != http.ErrServerClosed {
 		log.Fatalf("The server failed with the following error:%v\n", err)
 	}
