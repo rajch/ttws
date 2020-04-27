@@ -58,7 +58,7 @@ rmi$(C):
 endef
 
 ALLMODULES = webserver cpuload ipaddresses envvars filesystem
-ALLCMDS = ttws ics
+ALLCMDS = ttws ics ldgen
 
 ttwsMODULES = $(ALLMODULES)
 icsMODULES = webserver ipaddresses envvars filesystem
