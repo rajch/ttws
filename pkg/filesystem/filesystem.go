@@ -11,8 +11,8 @@ import (
 	"github.com/rajch/ttws/pkg/webserver"
 )
 
-// Route is the default path to invoke the filesystem module - /files
-const Route = "/files/"
+// DefaultPath is the default path to invoke the filesystem module - /files
+const DefaultPath = "/files/"
 
 func getFiles(startpath string, depth int, currentdepth int) string {
 	var result string
@@ -62,5 +62,5 @@ func filesystemhandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
-	webserver.AddRoute(Route, filesystemhandler)
+	webserver.AddHandler(DefaultPath, filesystemhandler)
 }

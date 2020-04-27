@@ -8,8 +8,8 @@ import (
 	"github.com/rajch/ttws/pkg/webserver"
 )
 
-// Route is the default path to invoke the cpuloadgenerator module - /loadcpu
-const Route = "/loadcpu"
+// DefaultPath is the default path to invoke the cpuloadgenerator module - /loadcpu
+const DefaultPath = "/loadcpu"
 
 func cpuloadhandler(w http.ResponseWriter, r *http.Request) {
 	value := 0.0001
@@ -19,11 +19,6 @@ func cpuloadhandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "OK:%v!\n", value)
 }
 
-// SetHome sets the default route of this module as the web server default
-func SetHome() {
-	webserver.SetHome(Route)
-}
-
 func init() {
-	webserver.AddRoute(Route, cpuloadhandler)
+	webserver.AddHandler(DefaultPath, cpuloadhandler)
 }

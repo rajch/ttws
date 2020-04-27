@@ -8,6 +8,6 @@ import (
 )
 
 func main() {
-	webserver.SetHome("/ip")
-	webserver.Serve()
+	webserver.SetRootHandler("/ip")
+	webserver.ListenAndServe()
 }

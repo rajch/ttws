@@ -8,8 +8,8 @@ import (
 	"github.com/rajch/ttws/pkg/webserver"
 )
 
-// Route is the default path to invoke the envvars module - /env
-const Route = "/env"
+// DefaultPath is the default path to invoke the envvars module - /env
+const DefaultPath = "/env"
 
 func envvarshandler(w http.ResponseWriter, r *http.Request) {
 	env := os.Environ()
@@ -21,5 +21,5 @@ func envvarshandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
-	webserver.AddRoute(Route, envvarshandler)
+	webserver.AddHandler(DefaultPath, envvarshandler)
 }

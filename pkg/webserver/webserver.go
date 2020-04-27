@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	routes    map[string]func(http.ResponseWriter, *http.Request)
-	homeroute string
+	handlers        map[string]func(http.ResponseWriter, *http.Request)
+	roothandlerpath string
 
 	// Flags
 	portflag = flag.String("p", "8080", "Port on which to run the server.")
@@ -38,23 +38,34 @@ func GetOption(flag *string, envvarname string, defaultvalue string) string {
 	return result
 }
 
-// AddRoute adds a handler to the webserver's routes.
-func AddRoute(route string, routeHandler func(http.ResponseWriter, *http.Request)) {
-	if routes == nil {
-		routes = make(map[string]func(http.ResponseWriter, *http.Request))
+// AddHandler adds a handler to the webserver.
+// If a handler already exists on the specified path, it will be replaced.
+func AddHandler(path string, handler func(http.ResponseWriter, *http.Request)) {
+	if handlers == nil {
+		handlers = make(map[string]func(http.ResponseWriter, *http.Request))
 	}
 
-	routes[route] = routeHandler
+	handlers[path] = handler
 }
 
-// SetHome sets a route as the home route, which will respond to /
-func SetHome(route string) {
-	homeroute = route
+// RemoveHandler removes the handler on the specified path.
+// If a handler does not exist on the specified path, nothing happens.
+func RemoveHandler(path string) {
+	if handlers != nil {
+		delete(handlers, path)
+	}
 }
 
-// Serve starts the tiny test web server.
-// A handler is set up for SIGINT and SIGTERM
-func Serve() {
+// SetRootHandler sets a root handler, which will respond to /
+// The handler has to be added using AddHandler before calling SetRootHandler.
+// A nonexistant path will be ignored.
+func SetRootHandler(path string) {
+	roothandlerpath = path
+}
+
+// ListenAndServe starts the web server.
+// It will stop on receiving SIGINT or SIGTERM.
+func ListenAndServe() {
 	flag.Parse()
 
 	port := ":" + GetOption(portflag, "PORT", "8080")
@@ -65,14 +76,14 @@ func Serve() {
 	// Use a channel to signal server closure
 	serverClosed := make(chan struct{})
 
-	// Set up routes
-	for route, routeHandler := range routes {
-		serverMux.HandleFunc(route, routeHandler)
+	// Set up handlers
+	for path, handler := range handlers {
+		serverMux.HandleFunc(path, handler)
 	}
 
 	// Set up home route, if specified and valid
-	if homeroute != "" {
-		roothandler, ok := routes[homeroute]
+	if roothandlerpath != "" {
+		roothandler, ok := handlers[roothandlerpath]
 		if ok {
 			serverMux.HandleFunc("/", roothandler)
 		}

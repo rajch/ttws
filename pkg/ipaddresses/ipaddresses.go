@@ -9,8 +9,8 @@ import (
 	"github.com/rajch/ttws/pkg/webserver"
 )
 
-// Route is the default path to invoke the ipaddresses module - /ip
-const Route = "/ip"
+// DefaultPath is the default path to invoke the ipaddresses module - /ip
+const DefaultPath = "/ip"
 
 func ipaddresseshandler(w http.ResponseWriter, r *http.Request) {
 	hostname, err := os.Hostname()
@@ -34,5 +34,5 @@ func ipaddresseshandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
-	webserver.AddRoute(Route, ipaddresseshandler)
+	webserver.AddHandler(DefaultPath, ipaddresseshandler)
 }
