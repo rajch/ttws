@@ -25,7 +25,7 @@ func ipaddresseshandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "IP Addresses: ")
 	addrs, err := net.InterfaceAddrs()
 	if err != nil {
-		fmt.Fprint(w, "  %v\n", err.Error())
+		fmt.Fprintf(w, "  %v\n", err)
 	} else {
 		for _, addr := range addrs {
 			fmt.Fprintf(w, "  - %v\n", addr.String())
