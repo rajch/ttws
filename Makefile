@@ -62,6 +62,7 @@ ALLCMDS = ttws ics ldgen
 
 ttwsMODULES = $(ALLMODULES)
 icsMODULES = webserver ipaddresses envvars filesystem
+ldgenMODULES= webserver cpuload
 
 # .PHONY: all
 # all: ttws
