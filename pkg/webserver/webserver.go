@@ -19,13 +19,21 @@ var (
 	portflag = flag.String("p", "8080", "Port on which to run the server.")
 )
 
+func parseflags() {
+	if !flag.Parsed() {
+		flag.Parse()
+	}
+}
+
 // GetOption gets an the value for an option. The value can be, in descending order
 // of preference:
 // - provided as a command-line option
 // - provided as an environment variable
 // - the default value
-func GetOption(flag *string, envvarname string, defaultvalue string) string {
-	result := *flag
+func GetOption(optflag *string, envvarname string, defaultvalue string) string {
+	parseflags()
+
+	result := *optflag
 
 	if result == "" || result == defaultvalue {
 		result = os.Getenv(envvarname)
@@ -66,7 +74,7 @@ func SetRootHandler(path string) {
 // ListenAndServe starts the web server.
 // It will stop on receiving SIGINT or SIGTERM.
 func ListenAndServe() {
-	flag.Parse()
+	parseflags()
 
 	port := ":" + GetOption(portflag, "PORT", "8080")
 
@@ -103,7 +111,7 @@ func ListenAndServe() {
 		log.Println("Server shutting down...")
 		if err := server.Shutdown(context.Background()); err != nil {
 			// Error from closing listeners, or context timeout:
-			log.Fatalf("Error during HTTP server shutdown: %v", err)
+			log.Fatalf("Error during HTTP server shutdown: %v.", err)
 		}
 
 		close(serverClosed)
@@ -112,7 +120,7 @@ func ListenAndServe() {
 	// Start listening using the server
 	log.Printf("Server starting on port %v...\n", port)
 	if err := server.ListenAndServe(); err != http.ErrServerClosed {
-		log.Fatalf("The server failed with the following error:%v\n", err)
+		log.Fatalf("The server failed with the following error: %v.\n", err)
 	}
 
 	<-serverClosed

@@ -57,12 +57,13 @@ rmi$(C):
 	docker image rm $(REGISTRY_USER)/$(C):$(IMAGE_TAG)
 endef
 
-ALLMODULES = webserver cpuload ipaddresses envvars filesystem
-ALLCMDS = ttws ics ldgen
+ALLMODULES = webserver cpuload ipaddresses envvars filesystem probes
+ALLCMDS = ttws ics ldgen probestest
 
 ttwsMODULES = $(ALLMODULES)
 icsMODULES = webserver ipaddresses envvars filesystem
 ldgenMODULES= webserver cpuload
+probestestMODULES= webserver probes
 
 # .PHONY: all
 # all: ttws
