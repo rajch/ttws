@@ -82,7 +82,15 @@ func (p *probe) parseflags() {
 
 }
 
-// NewProbe creates a new probe
+// NewProbe creates a new probe.
+// The probe will add a handler to the path:
+// <probesdefaultpath>/<probename>
+// . The probe name will be converted to lowercase in the path.
+// The probe handler will keep a count of calls made to it.
+// Initially, it will return a 200 status code. After <failafter>
+// calls, it will return a 500 status code on each subseqent call.
+// After doing this <recoverafter> times, it will go back to
+// returning 200.
 func NewProbe(name string, failafter int, recoverafter int) {
 	newprobe := &probe{
 		name:             name,
@@ -96,8 +104,6 @@ func NewProbe(name string, failafter int, recoverafter int) {
 		recoverafterFlag: makeflag(name, "recover", recoverafter, "Recover %s  probe n calls after failure"),
 	}
 	probes[name] = newprobe
-
-	//newprobe.parseflags()
 
 	newprobepath := path.Join(DefaultPath, strings.ToLower(name))
 	webserver.AddHandler(newprobepath, newprobe.handler)

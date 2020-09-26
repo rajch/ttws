@@ -15,6 +15,8 @@ var (
 	handlers        map[string]func(http.ResponseWriter, *http.Request)
 	roothandlerpath string
 
+	initfuncs []func()
+
 	// Flags
 	portflag = flag.String("p", "8080", "Port on which to run the server.")
 )
@@ -71,6 +73,15 @@ func SetRootHandler(path string) {
 	roothandlerpath = path
 }
 
+// AddInitFunc adds a function to be called before starting the server.
+// Handlers can use this to, for example, parse flags.
+func AddInitFunc(f func()) {
+	if initfuncs == nil {
+		initfuncs = []func(){}
+	}
+	initfuncs = append(initfuncs, f)
+}
+
 // ListenAndServe starts the web server.
 // It will stop on receiving SIGINT or SIGTERM.
 func ListenAndServe() {
@@ -95,6 +106,11 @@ func ListenAndServe() {
 		if ok {
 			serverMux.HandleFunc("/", roothandler)
 		}
+	}
+
+	// Call init functions
+	for _, initfunction := range initfuncs {
+		initfunction()
 	}
 
 	go func() {

@@ -21,13 +21,11 @@ func probesstatushandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
-
-	NewProbe("Readiness", 10, 0)
-	NewProbe("Liveness", 10, 0)
-
 	webserver.AddHandler(DefaultPath, probesstatushandler)
 
-	for _, probe := range probes {
-		probe.parseflags()
-	}
+	webserver.AddInitFunc(func() {
+		for _, probe := range probes {
+			probe.parseflags()
+		}
+	})
 }
