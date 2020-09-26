@@ -15,8 +15,7 @@ This project provides building blocks for creating tiny web servers suitable for
 |ipaddresses|Handler. Outputs the host name and ip addresses of the web host.|
 |envvars|Handler. Outputs all environment variables of the host process.|
 |filesystem|Handler. Outputs directory and file names from the host filesystem. Path and depth can be specified.|
-|probes|Handler. Provides endpoints for probing liveness and readiness. Each can be configured to fail 
-after a specified number of calls, and recover after another specified number.| 
+|probes|Handler. Provides endpoints for probing liveness and readiness. Each can be configured to fail after a specified number of calls, and recover after another specified number.| 
 
 
 ## Web Servers
