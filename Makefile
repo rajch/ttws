@@ -42,11 +42,15 @@ out/$C: cmd/$C/main.go $($(C)MODULES)
 	CGO_ENABLED=0 go build -o out/$(C) -ldflags "-X 'github.com/rajch/ttws/pkg/webserver.version=v$(IMAGE_TAG)'" cmd/$C/main.go
 
 .PHONY: $(C)image
-$(C)image: $C out/$(C)Dockerfile
+$(C)image: $C out/$(C)Dockerfile $(C)webassets
 	docker image build -f out/$(C)Dockerfile -t $(REGISTRY_USER)/$(C):$(IMAGE_TAG) out/
 
 out/$(C)Dockerfile: build/package/$(C)/singlestage.Dockerfile
 	cp build/package/$(C)/singlestage.Dockerfile out/$(C)Dockerfile
+
+.PHONY: $(C)webassets
+$(C)webassets:
+	@if [ -d web/$(C) ]; then cp -r web/$(C)/* out/; else echo No web assets for $(C);fi
 
 .PHONY: $(C)imagemultistage
 $(C)imagemultistage: build/package/$(C)/multistage.Dockerfile
@@ -57,7 +61,7 @@ rmi$(C):
 	docker image rm $(REGISTRY_USER)/$(C):$(IMAGE_TAG)
 endef
 
-ALLMODULES = webserver cpuload ipaddresses envvars filesystem probes
+ALLMODULES = webserver cpuload ipaddresses envvars filesystem probes static
 ALLCMDS = ttws ics ldgen probestest
 
 ttwsMODULES = $(ALLMODULES)
@@ -81,3 +85,6 @@ clean:
 .PHONY: list
 list:
 	@echo Available targets: $(ALLCMDS)
+
+something: pkg/webserver2
+	echo Hai hai
