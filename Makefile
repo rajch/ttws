@@ -1,7 +1,7 @@
 # Bump these on release, and for now update the deployment files
 VERSION_MAJOR ?= 0
 VERSION_MINOR ?= 1
-BUILD_NUMBER  ?= 0
+BUILD_NUMBER  ?= 1
 
 IMAGE_TAG ?= $(VERSION_MAJOR).$(VERSION_MINOR).$(BUILD_NUMBER)
 REGISTRY_USER ?= rajchaudhuri
@@ -66,7 +66,7 @@ ldgenMODULES= webserver cpuload
 probestestMODULES= webserver probes
 
 # .PHONY: all
-# all: ttws
+all: list
 
 # Apply command rules
 $(foreach C,$(ALLCMDS),$(eval $(CMDRULE)))
@@ -77,3 +77,7 @@ $(foreach M,$(ALLMODULES),$(eval $(MODULERULE)))
 .PHONY: clean
 clean:
 	rm -r out/
+
+.PHONY: list
+list:
+	@echo Available targets: $(ALLCMDS)
