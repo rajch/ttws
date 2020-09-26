@@ -88,7 +88,8 @@ func SetRootHandler(path string) {
 }
 
 // AddInitFunc adds a function to be called before starting the server.
-// Handlers can use this to, for example, parse flags.
+// Packages can use this to, for example, parse flags and dynamically
+// add/remove handlers just before the server starts.
 func AddInitFunc(f func()) {
 	if initfuncs == nil {
 		initfuncs = []func(){}
@@ -97,7 +98,7 @@ func AddInitFunc(f func()) {
 }
 
 // AddShutdownFunc adds a function to be called while stopping the server.
-// Handlers can use this to clean up if needed.
+// Packages can use this to clean up if needed.
 func AddShutdownFunc(f func()) {
 	if shutdownfuncs == nil {
 		shutdownfuncs = []func(){}
@@ -118,6 +119,16 @@ func ListenAndServe() {
 	// Use a channel to signal server closure
 	serverClosed := make(chan struct{})
 
+	log.Printf("Server version: %v", version)
+
+	// Call init functions
+	if initfuncs != nil {
+		log.Println("Initializing modules...")
+		for _, initfunction := range initfuncs {
+			initfunction()
+		}
+	}
+
 	// Set up handlers
 	for path, handler := range handlers {
 		serverMux.HandleFunc(path, handler)
@@ -128,16 +139,6 @@ func ListenAndServe() {
 		roothandler, ok := handlers[roothandlerpath]
 		if ok {
 			serverMux.HandleFunc("/", roothandler)
-		}
-	}
-
-	log.Printf("Server version: %v", version)
-
-	// Call init functions
-	if initfuncs != nil {
-		log.Println("Initializing modules...")
-		for _, initfunction := range initfuncs {
-			initfunction()
 		}
 	}
 
