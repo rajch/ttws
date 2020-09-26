@@ -39,7 +39,7 @@ define CMDRULE
 $C: out/$(C)
 
 out/$C: cmd/$C/main.go $($(C)MODULES)
-	CGO_ENABLED=0 go build -o out/$(C) cmd/$C/main.go
+	CGO_ENABLED=0 go build -o out/$(C) -ldflags "-X 'github.com/rajch/ttws/pkg/webserver.version=v$(IMAGE_TAG)'" cmd/$C/main.go
 
 .PHONY: $(C)image
 $(C)image: $C out/$(C)Dockerfile

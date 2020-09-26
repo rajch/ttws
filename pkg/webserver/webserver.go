@@ -21,6 +21,8 @@ var (
 	initfuncs     []func()
 	shutdownfuncs []func()
 
+	version = "unversioned"
+
 	// Flags
 	portflag = flag.String("p", "8080", "Port on which to run the server.")
 )
@@ -29,6 +31,11 @@ func parseflags() {
 	if !flag.Parsed() {
 		flag.Parse()
 	}
+}
+
+// Version returns the version of the web server.
+func Version() string {
+	return version
 }
 
 // GetOption gets an the value for an option. The value can be, in descending order
@@ -123,6 +130,8 @@ func ListenAndServe() {
 			serverMux.HandleFunc("/", roothandler)
 		}
 	}
+
+	log.Printf("Server version: %v", version)
 
 	// Call init functions
 	if initfuncs != nil {
