@@ -1,3 +1,4 @@
+// Package ipaddresses registers a handler that emits the host name and ip addresses of the web server host.
 package ipaddresses
 
 import (

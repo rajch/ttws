@@ -1,3 +1,4 @@
+// Package envvars registers a handler that emits all environment variables of the host process.
 package envvars
 
 import (

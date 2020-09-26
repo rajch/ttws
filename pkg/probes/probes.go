@@ -1,3 +1,9 @@
+// Package probes allows the creation of probes, which are handlers that return either success or failure.
+// Each probe can be configured to fail (that is, start returning 500 status codes) after a specified
+// number of calls, and to recover (start returning 200 status codes) after another specified number.
+// Consumers of the package can call the NewProbe method to add any number of probes.
+// The package itself registers a handler on the default path, which emits a list of all probes
+// with their current status.
 package probes
 
 import (

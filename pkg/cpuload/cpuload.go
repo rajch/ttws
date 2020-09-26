@@ -1,3 +1,4 @@
+// Package cpuload registers a handler that calculates the square root of 0.0001, one million times, and emits the result.
 package cpuload
 
 import (

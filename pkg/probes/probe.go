@@ -83,14 +83,14 @@ func (p *probe) parseflags() {
 }
 
 // NewProbe creates a new probe.
-// The probe will add a handler to the path:
+// The probe adds a handler to the path:
 // <probesdefaultpath>/<probename>
-// . The probe name will be converted to lowercase in the path.
-// The probe handler will keep a count of calls made to it.
-// Initially, it will return a 200 status code. After <failafter>
-// calls, it will return a 500 status code on each subseqent call.
-// After doing this <recoverafter> times, it will go back to
-// returning 200.
+// . The probe name is converted to lowercase in the path.
+// The probe handler keeps a count of calls made to it.
+// Initially, it returns a 200 status code. After <failafter>
+// calls, it returns a 500 status code on each subseqent call.
+// After doing this <recoverafter> times, it goes back to
+// returning 200 status codes, and the cycle repeats.
 func NewProbe(name string, failafter int, recoverafter int) {
 	newprobe := &probe{
 		name:             name,

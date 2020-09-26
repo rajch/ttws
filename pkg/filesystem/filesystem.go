@@ -1,3 +1,8 @@
+// Package filesystem registers a handler that emits directory listings from the web server host filesystem.
+// The path for this handler needs a trailing slash. This submits all requests beginning with that
+// path to the handler, which parses the url after the path as the filesystem path whose directory
+// listing it shows. The listing is three directory levels deep by default. This depth can be changed
+// by including a query string parameter called 'depth'.
 package filesystem
 
 import (

@@ -1,3 +1,6 @@
+// Package webserver sets up a simple http server that listens on a port and stops on SIGINT or SIGTERM.
+// It exposes methods for other packages to register per-path handlers, and functions that will
+// be called when the web server starts up and shuts down.
 package webserver
 
 import (
@@ -31,8 +34,11 @@ func parseflags() {
 // GetOption gets an the value for an option. The value can be, in descending order
 // of preference:
 // - provided as a command-line option
+//
 // - provided as an environment variable
+//
 // - the default value
+//
 func GetOption(optflag *string, envvarname string, defaultvalue string) string {
 	parseflags()
 
