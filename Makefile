@@ -1,7 +1,7 @@
 # Bump these on release, and for now update the deployment files
 VERSION_MAJOR ?= 0
-VERSION_MINOR ?= 1
-BUILD_NUMBER  ?= 1
+VERSION_MINOR ?= 2
+BUILD_NUMBER  ?= 0
 
 IMAGE_TAG ?= $(VERSION_MAJOR).$(VERSION_MINOR).$(BUILD_NUMBER)
 REGISTRY_USER ?= rajchaudhuri
