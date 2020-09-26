@@ -15,7 +15,8 @@ var (
 	handlers        map[string]func(http.ResponseWriter, *http.Request)
 	roothandlerpath string
 
-	initfuncs []func()
+	initfuncs     []func()
+	shutdownfuncs []func()
 
 	// Flags
 	portflag = flag.String("p", "8080", "Port on which to run the server.")
@@ -82,6 +83,15 @@ func AddInitFunc(f func()) {
 	initfuncs = append(initfuncs, f)
 }
 
+// AddShutdownFunc adds a function to be called while stopping the server.
+// Handlers can use this to clean up if needed.
+func AddShutdownFunc(f func()) {
+	if shutdownfuncs == nil {
+		shutdownfuncs = []func(){}
+	}
+	shutdownfuncs = append(shutdownfuncs, f)
+}
+
 // ListenAndServe starts the web server.
 // It will stop on receiving SIGINT or SIGTERM.
 func ListenAndServe() {
@@ -109,8 +119,11 @@ func ListenAndServe() {
 	}
 
 	// Call init functions
-	for _, initfunction := range initfuncs {
-		initfunction()
+	if initfuncs != nil {
+		log.Println("Initializing modules...")
+		for _, initfunction := range initfuncs {
+			initfunction()
+		}
 	}
 
 	go func() {
@@ -140,6 +153,14 @@ func ListenAndServe() {
 	}
 
 	<-serverClosed
+
+	// Call shutdown functions
+	if shutdownfuncs != nil {
+		log.Println("Shutting down modules...")
+		for _, shutdownfunction := range shutdownfuncs {
+			shutdownfunction()
+		}
+	}
 
 	log.Println("Server shut down.")
 }
