@@ -1,7 +1,7 @@
 # Bump these on release, and for now update the deployment files
 VERSION_MAJOR ?= 0
 VERSION_MINOR ?= 2
-BUILD_NUMBER  ?= 0
+BUILD_NUMBER  ?= 1
 
 IMAGE_TAG ?= $(VERSION_MAJOR).$(VERSION_MINOR).$(BUILD_NUMBER)
 REGISTRY_USER ?= rajchaudhuri
@@ -43,7 +43,9 @@ out/$C: cmd/$C/main.go $($(C)MODULES)
 
 .PHONY: $(C)image
 $(C)image: $C out/$(C)Dockerfile $(C)webassets
-	docker image build -f out/$(C)Dockerfile -t $(REGISTRY_USER)/$(C):$(IMAGE_TAG) out/
+	docker image build -f out/$(C)Dockerfile \
+					   -t $(REGISTRY_USER)/$(C):$(IMAGE_TAG) \
+					   out/
 
 out/$(C)Dockerfile: build/package/$(C)/singlestage.Dockerfile
 	cp build/package/$(C)/singlestage.Dockerfile out/$(C)Dockerfile
@@ -54,11 +56,24 @@ $(C)webassets:
 
 .PHONY: $(C)imagemultistage
 $(C)imagemultistage: build/package/$(C)/multistage.Dockerfile
-	docker image build -f build/package/$(C)/multistage.Dockerfile -t $(REGISTRY_USER)/$(C):$(IMAGE_TAG) .
+	docker image build -f build/package/$(C)/multistage.Dockerfile \
+					   -t $(REGISTRY_USER)/$(C):$(IMAGE_TAG) \
+					   --build-arg IMAGE_TAG=$(IMAGE_TAG) \
+					   .
 
 .PHONY: rmi$(C)
 rmi$(C):
 	docker image rm $(REGISTRY_USER)/$(C):$(IMAGE_TAG)
+
+.PHONY: $(C)imagemultiarch
+$(C)imagemultiarch: build/package/$(C)/multistage.Dockerfile
+	docker buildx build -f build/package/$(C)/multistage.Dockerfile \
+						-t $(REGISTRY_USER)/$(C):$(IMAGE_TAG) \
+						--build-arg IMAGE_TAG=$(IMAGE_TAG) \
+						--platform linux/amd64,linux/386,linux/arm64,linux/ppc64le,linux/arm/v7 \
+						--push \
+						.
+
 endef
 
 ALLMODULES = webserver cpuload ipaddresses envvars filesystem probes static
@@ -85,6 +100,3 @@ clean:
 .PHONY: list
 list:
 	@echo Available targets: $(ALLCMDS)
-
-something: pkg/webserver2
-	echo Hai hai
